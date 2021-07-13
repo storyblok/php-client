@@ -53,6 +53,16 @@ class Client extends BaseClient
      * @var Cache
      */
     protected $cache;
+    
+    /**
+     * @var string
+     */
+    protected $language = 'default';
+    
+    /**
+     * @var string
+     */
+    protected $fallbackLanguage = 'default';
 
     /**
      * @param string $apiKey
@@ -81,6 +91,30 @@ class Client extends BaseClient
     public function editMode($enabled = true)
     {
         $this->editModeEnabled = $enabled;
+        return $this;
+    }
+    
+    /**
+     * Set the language the story should be retrieved in
+     *
+     * @param  string $language
+     * @return Client
+     */
+    public function language($language = 'default')
+    {
+        $this->language = $language;
+        return $this;
+    }
+    
+    /**
+     * Set the fallback language the story should be retrieved in
+     *
+     * @param  string $fallbackLanguage
+     * @return Client
+     */
+    public function fallbackLanguage($fallbackLanguage = 'default')
+    {
+        $this->fallbackLanguage = $fallbackLanguage;
         return $this;
     }
 
@@ -318,6 +352,16 @@ class Client extends BaseClient
             if ($this->release) {
                 $options['from_release'] = $this->release;
             }
+            
+            if($byUuid) {
+                if ($this->language) {
+                    $options['language'] = $this->language;
+                }
+
+                if ($this->fallbackLanguage) {
+                    $options['fallback_lang'] = $this->fallbackLanguage;
+                }
+            }
 
             try {
                 $response = $this->get($key, $options);
@@ -379,6 +423,14 @@ class Client extends BaseClient
 
             if ($this->resolveRelations) {
                 $options['resolve_relations'] = $this->resolveRelations;
+            }
+            
+            if ($this->language) {
+                $options['language'] = $this->language;
+            }
+            
+            if ($this->fallbackLanguage) {
+                $options['fallback_lang'] = $this->fallbackLanguage;
             }
 
             $response = $this->get($endpointUrl, $options);
